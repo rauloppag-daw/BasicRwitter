@@ -7,20 +7,55 @@
     <title>Rwitter</title>
 </head>
 <body>
+    <template id="publicacion">
+        <style>
+        *{
+            color: whitesmoke;
+        }
+
+        p {
+            color: whitesmoke;
+        }
+
+        b {
+            color: whitesmoke;
+        }
+        #emailUser{
+            display: flex; align-items: center; background-color: transparent;
+        }
+        </style>
+        <div id="emailUser">
+        </div>
+        <hr>
+        <div id="contenido" style="white-space: normal; word-break:break-word;">
+        </div>
+        <div id="piepubli" style="display: flex; margin: auto; border-bottom: 1px solid grey; align-items: center;">
+            <div id="editado"></div>
+            <div style="width: 60%;">
+            </div>
+            <div id="likes" style="display:flex;  align-items: center;">          
+                <div id="dislike"></div>
+                <div id="cont"></div>
+                <div id="like"></div>
+            </div>
+            <div id="hora"  style="margin: auto;"></div>
+        </div>
+    </template>
+
     <div id="cortina">
         
     </div>
     <div id="formCont">
-        <form>
+        <form id="publi">
             <h1>Publicar rweet...</h1>
+            <p class="error"></p>
             <input type="email" id="email" placeholder="Email...">
-            <br>
+            <p class="error"></p>
             <input type="nombre" id="nombre" placeholder="Nombre...">
-            <br>
-            <textarea id="texto" placeholder="Escribe lo que quieras"></textarea>
-            <br>
+            <p class="error"></p>
+            <textarea id="cuerpo" placeholder="Escribe lo que quieras"></textarea>
         </form>
-        <button id="publicar">Publicar</button>
+        <button id="publicar" onclick="anyadirPublicacion()">Publicar</button>
         <div id="volvCont">
             <button id="volver">Volver</button>
         </div>
