@@ -235,6 +235,7 @@ main {
     border: none;
     width: 4vw;
     height: 4vw;
+    transition: all 0.2s;
     & img{
         width: 80%;
     }
