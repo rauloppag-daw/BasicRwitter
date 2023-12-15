@@ -152,9 +152,11 @@ main {
         resize: none;
         border-radius: 0.5vw;
         height: 4vh;
-        border: none;
         margin: auto;
         margin-top: 2vh;
+        color: whitesmoke;
+        background-color: transparent;
+        border: 0.1vw solid whitesmoke;
     }
 
     & form>textarea {
@@ -163,8 +165,10 @@ main {
         border-radius: 0.5vw;
         height: 30vh;
         margin: auto;
-        border: none;
         margin-top: 2vh;
+        color: whitesmoke;
+        background-color: transparent;
+        border: 0.1vw solid whitesmoke;
     }
 
     h1{
