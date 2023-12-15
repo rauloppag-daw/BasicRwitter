@@ -1,0 +1,215 @@
+@font-face {
+    font-family: Redhatsemi;
+    src: url(./fonts/RedHatDisplay-SemiBold.otf);
+}
+
+@font-face {
+    font-family: Redhatbold;
+    src: url(./fonts/RedHatDisplay-Bold.otf);
+}
+
+@font-face {
+    font-family: Redhatblack;
+    src: url(./fonts/RedHatDisplay-Black.otf);
+}
+*{
+    font-family: Redhatsemi;
+    font-size: 1vw;
+}
+
+
+html {   
+    background-image: url(./img/background.png);
+    background-size: 100%;
+    overflow: hidden;
+}
+
+
+header {
+    color: white;
+    font-family: redhatblack;
+    text-align: center;
+    
+    #titulo{
+        font-family: Redhatblack;
+        font-size: 3vw;
+    }
+}
+
+main {
+    width: 100%;
+    display: flex;
+    height: 90vh;
+    display: flex;
+
+    #tablon {
+        margin: auto;
+        width: 70%;
+        backdrop-filter: blur(15px) brightness(80%);
+        height: 100%;
+        border-radius: 1vw;
+        border: 0.1vw solid whitesmoke;
+    }
+
+    #publicRweet {
+        position: absolute;
+        background-color: red;
+        width: 6vw;
+        height: 6vw;
+        border-radius: 50%;
+        bottom: 2vw;
+        right: 4vw;
+        background-color: whitesmoke;
+        cursor: pointer;
+        display: flex;
+        transition: all 0.2s;
+
+        & img {
+            width: 100%;
+            height: 60%;
+            margin: auto;
+            width: 70%;
+            transition: all 0.2s;
+        }
+
+
+    }
+
+    #publicRweet:hover {
+        filter: drop-shadow(0px 0px 5px whitesmoke);
+
+        & img {
+            animation: sendRweet 0.5s infinite;
+            animation-delay: 0.2s;
+            cursor: pointer;
+        }
+    }
+
+}
+
+@keyframes sendRweet {
+    0% {
+        transform: scale(1) skewX(0deg);
+    }
+
+    25% {
+        transform: scale(1) skewX(5deg);
+    }
+
+    50% {
+        transform: scale(1) skewX(0deg);
+    }
+
+    75% {
+        transform: scale(1) skewX(-5deg);
+    }
+
+    100% {
+        transform: scale(1) skewX(0deg);
+    }
+
+}
+
+#cortina {
+    background-color: #13002d;
+    opacity: 0.7;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 5;
+    left: 0;
+    display: none;
+}
+
+#formCont {
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 1px solid whitesmoke;
+    border-radius: 15px;
+    background-color: #13002d;
+    width: 30%;
+    height: 70%;
+    position: absolute;
+    z-index: 6;
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+
+    & form {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    & form>input {
+        width: 25vw;
+        resize: none;
+        border-radius: 0.5vw;
+        height: 4vh;
+        border: none;
+        margin: auto;
+        margin-top: 2vh;
+    }
+
+    & form>textarea {
+        width: 25vw;
+        resize: none;
+        border-radius: 0.5vw;
+        height: 30vh;
+        margin: auto;
+        border: none;
+        margin-top: 2vh;
+    }
+
+    h1{
+        font-family: Redhatblack;
+        color: whitesmoke;
+    }
+    #publicar{
+        border: none;
+        border-radius: 1vw;
+        background-color: transparent;
+        color: whitesmoke;
+        width: 25vw;
+        margin-top: 2vh;
+        padding: 0.5vw 2vw;
+        font-size: 1vw;
+        cursor: pointer;
+        transition: all 0.3s;
+        background-color: whitesmoke;
+        color: #13002d;
+    }
+
+    #publicar:hover{
+        background-color: #d3668a;
+    }
+    #volvCont{
+        width: 25vw;
+        display: flex;
+    }
+    #volver{
+        border: 0.1vw solid whitesmoke;
+        border-radius: 1vw;
+        background-color: transparent;
+        color: whitesmoke;
+        width: 15vw;
+        margin-top: 2vh;
+        padding: 0.5vw 2vw;
+        font-size: 0.7vw;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin: auto;
+    }
+    
+    #volver:hover{
+        background-color: #d3668a;
+        color: #13002d;
+        border: 0.1vw solid #d3668a;
+    }
+}
