@@ -219,3 +219,33 @@ main {
     color: rgb(255, 49, 49);
     font-size: 0.5vw;
 }
+
+#botonesOrdenamiento{
+    position: absolute;
+    width: 5vw;
+    z-index: 5;    
+    bottom: 2vw;
+    left: 9.8vw;
+    
+}
+.ordBtn{
+    margin-top: 1vw;
+    border-radius: 50%;
+    background-color: whitesmoke;
+    border: none;
+    width: 4vw;
+    height: 4vw;
+    & img{
+        width: 80%;
+    }
+}
+
+.ordBtn:hover{
+    filter: drop-shadow(0px 0px 5px whitesmoke);
+
+        & img {
+            animation: sendRweet 0.5s infinite;
+            animation-delay: 0.2s;
+            cursor: pointer;
+        }
+}
