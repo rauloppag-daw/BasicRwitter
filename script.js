@@ -45,6 +45,22 @@ class PublicacionComponente extends HTMLElement {
 // Registro del componente personalizado
 customElements.define('publicacion-componente',PublicacionComponente);
 
+async function obtenerElementosGet(){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=1');
+    
+    if(conexion.ok){
+        let resultado = await conexion.json();
+        console.log(resultado);
+        for(let i=0;i<resultado.length;i++){
+            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo']);
+            tablon.appendChild(publicacion);
+        }
+    }else{
+        alert('Error de red');
+    }
+}
+
+obtenerElementosGet();
 
 function comprobarCampos(nombre, email, cuerpo){
     let errores = "";
