@@ -1,8 +1,9 @@
 var ordPorLikes= false;
 class PublicacionComponente extends HTMLElement {
 
-    constructor(email, nombre, cuerpo, likes, fecha) {
+    constructor(codigo, email, nombre, cuerpo, likes, fecha) {
         super();
+        this.codigo = codigo;
         this.email = email;
         this.nombre = nombre;
         this.cuerpo = cuerpo;
@@ -11,6 +12,7 @@ class PublicacionComponente extends HTMLElement {
         }
 
     connectedCallback() {
+
     const shadow = this.attachShadow({mode: 'open'});
     let plantilla = document.getElementById('publicacion'); 
     let plantillaContenido = plantilla.content;
@@ -106,7 +108,7 @@ function anyadirPublicacion(){
    
     
     if(incorrecto!=false){
-        anyadirElementoPost(nombre, email, cuerpo);
+        anyadirElementoPost(email, nombre, cuerpo);
         
     
         document.forms.publi.nombre.value = "";
@@ -175,6 +177,27 @@ async function anyadirElementoPost(email, nombre, cuerpo){
     let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=2',
     {
         method: 'POST',
+        headers:{
+            "Content-type": "application/json;charset=UTF-8"
+        },
+        body: JSON.stringify({email : email, nombre: nombre, cuerpo: cuerpo, likes: 0, fecha : obtenerHoraFecha() })
+    });
+
+    if(conexion.ok){
+        let resultado = await conexion.json();
+        tablon.innerHTML = '';
+        for(let i=0;i<resultado.length;i++){
+            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            tablon.appendChild(publicacion);
+        }
+    }
+    
+}
+
+async function likearPubli(){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=2',
+    {
+        method: 'PUT',
         headers:{
             "Content-type": "application/json;charset=UTF-8"
         },

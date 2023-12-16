@@ -26,7 +26,7 @@ function devolverRweets($conexion){
     $rweets = array();
 
     foreach($rweetsBBDD as $r){
-        array_push($rweets, array('email'=>$r['email'], 'nombre'=>$r['nombre'], 'cuerpo'=>$r['cuerpo'],  'likes'=>$r['likes'],  'fecha'=>$r['fecha']));
+        array_push($rweets, array('codigo' => $r['codigo'], 'email'=>$r['email'], 'nombre'=>$r['nombre'], 'cuerpo'=>$r['cuerpo'],  'likes'=>$r['likes'],  'fecha'=>$r['fecha']));
     }
 
     echo json_encode($rweets);
