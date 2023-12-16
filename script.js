@@ -39,12 +39,21 @@ class PublicacionComponente extends HTMLElement {
     shadow.append(plantillaContenido.cloneNode(true));
 
     this.shadowRoot.querySelectorAll('#piepubli > #likes > #like > button')[0].addEventListener('click', ()=>{
-        this.likes++;
-        this.shadowRoot.querySelector('#piepubli > #likes > #cont').innerHTML = `<p> ${this.likes}</p>`;
+        likearPubli(this.codigo, 1)
+        .then((numlikes)=>{
+            this.likes = numlikes;
+            this.shadowRoot.querySelector('#cont').innerHTML = `<p> ${ this.likes }</p>`;
+            console.log(this.likes)
+        })
+       
     })
     this.shadowRoot.querySelectorAll('#piepubli > #likes >  #dislike > button')[0].addEventListener('click', ()=>{
-        this.likes--;
-        this.shadowRoot.querySelector('#piepubli > #likes > #cont').innerHTML = `<p> ${this.likes}</p>`;
+        likearPubli(this.codigo, -1)
+        .then((numlikes)=>{
+            this.likes = numlikes;
+            this.shadowRoot.querySelector('#cont').innerHTML = `<p> ${ this.likes }</p>`;
+            console.log(this.likes)
+        })
     })
     
 
@@ -165,7 +174,7 @@ function obtenerHoraFecha(){
         let resultado = await conexion.json();
         console.log(resultado);
         for(let i=0;i<resultado.length;i++){
-            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
             tablon.appendChild(publicacion);
         }
     }else{
@@ -187,30 +196,26 @@ async function anyadirElementoPost(email, nombre, cuerpo){
         let resultado = await conexion.json();
         tablon.innerHTML = '';
         for(let i=0;i<resultado.length;i++){
-            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
             tablon.appendChild(publicacion);
         }
     }
     
 }
 
-async function likearPubli(){
-    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=2',
+async function likearPubli(codigo, val){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=3',
     {
         method: 'PUT',
         headers:{
             "Content-type": "application/json;charset=UTF-8"
         },
-        body: JSON.stringify({email : email, nombre: nombre, cuerpo: cuerpo, likes: 0, fecha : obtenerHoraFecha() })
+        body: JSON.stringify({codigo: codigo, val: val })
     });
 
     if(conexion.ok){
-        let resultado = await conexion.json();
-        tablon.innerHTML = '';
-        for(let i=0;i<resultado.length;i++){
-            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
-            tablon.appendChild(publicacion);
-        }
+        let numLikes = await conexion.text();
+        return numLikes;
     }
     
 }

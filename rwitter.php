@@ -12,6 +12,8 @@ function aplicacion(){
         }else if($_GET['function'] == 2){
             anyadirRweet($conexion);
             devolverRweets($conexion);
+        }else if($_GET['function'] == 3){
+            likear($conexion);
         }
     }
 }
@@ -26,7 +28,7 @@ function devolverRweets($conexion){
     $rweets = array();
 
     foreach($rweetsBBDD as $r){
-        array_push($rweets, array('codigo' => $r['codigo'], 'email'=>$r['email'], 'nombre'=>$r['nombre'], 'cuerpo'=>$r['cuerpo'],  'likes'=>$r['likes'],  'fecha'=>$r['fecha']));
+        array_push($rweets, array('codigo' => $r['id'], 'email'=>$r['email'], 'nombre'=>$r['nombre'], 'cuerpo'=>$r['cuerpo'],  'likes'=>$r['likes'],  'fecha'=>$r['fecha']));
     }
 
     echo json_encode($rweets);
@@ -42,5 +44,28 @@ function anyadirRweet($conexion){
     $sentencia->bindParam(':l', $_post['likes']);
     $sentencia->bindParam(':f', $_post['fecha']);
     $isOk = $sentencia->execute();
+}
+
+
+function likear($conexion){
+    $_post = json_decode(file_get_contents('php://input'),true);
+
+    $sql = 'SELECT likes FROM rweets WHERE id = :c';
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bindParam(':c', $_post['codigo']);
+    $sentencia -> setFetchMode(PDO::FETCH_ASSOC);
+    $isOk = $sentencia->execute();
+    $likesBBDD = $sentencia->fetch();
+
+    $likesTotal = $likesBBDD['likes'] + $_post['val'];
+ 
+    $sql = 'UPDATE rweets SET likes = :l WHERE id = :c';
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bindParam(':c', $_post['codigo']);
+    $sentencia->bindParam(':l', $likesTotal);
+    $isOk = $sentencia->execute();
+
+    echo $likesTotal;
+
 }
 
