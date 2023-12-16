@@ -1,12 +1,14 @@
 var ordPorLikes= false;
 class PublicacionComponente extends HTMLElement {
-    constructor(email, nombre, cuerpo) {
-    super();
-    this.email = email;
-    this.nombre = nombre;
-    this.cuerpo = cuerpo;
-    this.likes = 0;
-    }
+
+    constructor(email, nombre, cuerpo, likes, fecha) {
+        super();
+        this.email = email;
+        this.nombre = nombre;
+        this.cuerpo = cuerpo;
+        this.likes = likes;
+        this.fecha = fecha;
+        }
 
     connectedCallback() {
     const shadow = this.attachShadow({mode: 'open'});
@@ -23,7 +25,12 @@ class PublicacionComponente extends HTMLElement {
     likes.querySelector('#dislike').innerHTML = `<button   style="border: none; background-color: transparent; cursor:pointer;"> <img src="./img/dislike.png" style="padding-top: 1.5vh; filter: invert(); width:25px; heigth:25px; margin-right:1%; margin-left: 1%;"/> </button>`;
     likes.querySelector('#cont').innerHTML = `<p> ${this.likes}</p>`;
     likes.querySelector('#like').innerHTML =  `<button style="border: none; background-color: transparent; cursor:pointer"> <img src="./img/like.png" style="filter: invert(); width:25px; heigth:25px; margin-right:1%; margin-left: 1%;" /> </button>`;
-    hora.textContent = obtenerHoraFecha();
+    if(this.fecha == ''){
+        hora.textContent = obtenerHoraFecha();
+    }else{
+        hora.textContent = this.fecha;
+    }
+    
     this.style.cursor = 'pointer';
    
 
@@ -45,22 +52,9 @@ class PublicacionComponente extends HTMLElement {
 // Registro del componente personalizado
 customElements.define('publicacion-componente',PublicacionComponente);
 
-async function obtenerElementosGet(){
-    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=1');
-    
-    if(conexion.ok){
-        let resultado = await conexion.json();
-        console.log(resultado);
-        for(let i=0;i<resultado.length;i++){
-            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo']);
-            tablon.appendChild(publicacion);
-        }
-    }else{
-        alert('Error de red');
-    }
-}
 
-obtenerElementosGet();
+
+
 
 function comprobarCampos(nombre, email, cuerpo){
     let errores = "";
@@ -112,20 +106,7 @@ function anyadirPublicacion(){
    
     
     if(incorrecto!=false){
-        let tablon = document.getElementById('tablon');
-        let listado = document.querySelectorAll('#tablon > publicacion-componente');
-        
-        let publicacion = new PublicacionComponente(email, nombre, cuerpo);
-        console.log(ordPorLikes);
-        if(listado.length>1 && !ordPorLikes){
-            if(!compararFecha(listado[0].shadowRoot.querySelector('#piepubli > #hora').textContent,listado[listado.length-1].shadowRoot.querySelector('#piepubli > #hora').textContent)){
-                tablon.appendChild(publicacion);
-            }else{
-                tablon.insertBefore(publicacion, document.getElementById('tablon').firstChild);
-            }
-        }else{
-            tablon.appendChild(publicacion);
-        }
+        anyadirElementoPost(nombre, email, cuerpo);
         
     
         document.forms.publi.nombre.value = "";
@@ -166,10 +147,50 @@ document.getElementById('volver').onclick = ()=>{
 
 function obtenerHoraFecha(){
     let date = new Date();
-    let fecha = date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
+    let fecha = date.getFullYear() + "-" +(date.getMonth()+1) + "-" + date.getDate();
     let hora = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
     let minuto = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
     let segundos = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
 
-    return hora + ":" + minuto + ":" + segundos + " - " + fecha;
+    return  fecha + ' ' + hora + ":" + minuto + ":" + segundos ;
   }
+
+
+  async function obtenerElementosGet(){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=1');
+    
+    if(conexion.ok){
+        let resultado = await conexion.json();
+        console.log(resultado);
+        for(let i=0;i<resultado.length;i++){
+            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            tablon.appendChild(publicacion);
+        }
+    }else{
+        alert('Error de red');
+    }
+}
+
+async function anyadirElementoPost(email, nombre, cuerpo){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=2',
+    {
+        method: 'POST',
+        headers:{
+            "Content-type": "application/json;charset=UTF-8"
+        },
+        body: JSON.stringify({email : email, nombre: nombre, cuerpo: cuerpo, likes: 0, fecha : obtenerHoraFecha() })
+    });
+
+    if(conexion.ok){
+        let resultado = await conexion.json();
+        tablon.innerHTML = '';
+        for(let i=0;i<resultado.length;i++){
+            let publicacion = new PublicacionComponente(resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            tablon.appendChild(publicacion);
+        }
+    }
+    
+}
+
+obtenerElementosGet();
+console.log(obtenerHoraFecha());
