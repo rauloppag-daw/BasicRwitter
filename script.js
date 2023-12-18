@@ -1,4 +1,9 @@
 var ordPorLikes= false;
+
+var ordLikes = false;
+var ordAntiguo = false;
+var ordNuevos = false;
+
 class PublicacionComponente extends HTMLElement {
 
     constructor(codigo, email, nombre, cuerpo, likes, fecha) {
@@ -9,11 +14,12 @@ class PublicacionComponente extends HTMLElement {
         this.cuerpo = cuerpo;
         this.likes = likes;
         this.fecha = fecha;
+        this.shadow = this.attachShadow({mode: 'open'});
         }
 
     connectedCallback() {
-
-    const shadow = this.attachShadow({mode: 'open'});
+    
+    this.shadow.innerHTML = "";
     let plantilla = document.getElementById('publicacion'); 
     let plantillaContenido = plantilla.content;
 
@@ -36,7 +42,7 @@ class PublicacionComponente extends HTMLElement {
     this.style.cursor = 'pointer';
    
 
-    shadow.append(plantillaContenido.cloneNode(true));
+    this.shadow.append(plantillaContenido.cloneNode(true));
 
     this.shadowRoot.querySelectorAll('#piepubli > #likes > #like > button')[0].addEventListener('click', ()=>{
         likearPubli(this.codigo, 1)
@@ -172,7 +178,6 @@ function obtenerHoraFecha(){
     
     if(conexion.ok){
         let resultado = await conexion.json();
-        console.log(resultado);
         for(let i=0;i<resultado.length;i++){
             let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
             tablon.appendChild(publicacion);
@@ -220,5 +225,135 @@ async function likearPubli(codigo, val){
     
 }
 
+function ordenarAntiguos(){
+    ordPorLikes = false;
+    let publicacionComponente = document.querySelector('#tablon').querySelectorAll('publicacion-componente');
+    let arr = [];
+
+    if(!ordAntiguo){
+        document.getElementsByClassName('ordBtn')[0].style.backgroundColor = '#d3668a';
+        document.getElementsByClassName('ordBtn')[1].style.backgroundColor = 'whitesmoke';
+        document.getElementsByClassName('ordBtn')[2].style.backgroundColor = 'whitesmoke';
+        ordAntiguo = true;
+        ordNuevos = false;
+        ordLikes = false;
+    }
+
+    for(let i=0;i<publicacionComponente.length;i++){
+        arr.push(publicacionComponente[i]);
+    }
+
+    let ordenado = arr.sort(function(a,b){
+        let shadow = a.shadowRoot.querySelector('#piepubli > #hora').textContent;        
+        let shadow2 = b.shadowRoot.querySelector('#piepubli > #hora').textContent; 
+
+        let date1 = new Date(shadow.split(' ')[0] + 'T' + shadow.split(' ')[1]);
+        let date2 = new Date(shadow2.split(' ')[0] + 'T' + shadow2.split(' ')[1]);
+
+        if(date1 > date2){
+            return 1;
+        }
+
+        if(date1 < date2){
+            return -1;
+        }
+
+        return 0;
+    });
+
+    let tablon = document.getElementById('tablon');
+    tablon.innerHTML = '';
+    for(let i=0;i<ordenado.length;i++){
+       tablon.append(ordenado[i]);
+    }
+    
+}
+
+function ordenarLikes(){
+    ordPorLikes = true;
+    let publicacionComponente = document.querySelector('#tablon').querySelectorAll('publicacion-componente');
+    let arr = [];
+
+    if(!ordLikes){
+        document.getElementsByClassName('ordBtn')[2].style.backgroundColor = '#d3668a';
+        document.getElementsByClassName('ordBtn')[0].style.backgroundColor = 'whitesmoke';
+        document.getElementsByClassName('ordBtn')[1].style.backgroundColor = 'whitesmoke';
+        ordLikes = true;
+        ordAntiguo = false;
+        ordNuevos = false;
+    }
+    
+    for(let i=0;i<publicacionComponente.length;i++){
+        arr.push(publicacionComponente[i]);
+    }
+    let ordenado = arr.sort(function(a,b){
+        let shadow = Number(a.shadowRoot.querySelector('#piepubli > #likes > #cont').textContent);        
+        let shadow2 = Number(b.shadowRoot.querySelector('#piepubli > #likes > #cont').textContent);
+        
+        if(shadow < shadow2){
+            return 1;
+        }
+
+        if(shadow > shadow2){
+            return -1;
+        }
+
+        return 0;
+    });
+    
+    let tablon = document.getElementById('tablon');
+    tablon.innerHTML = '';
+    for(let i=0;i<ordenado.length;i++){
+        console.log(ordenado[i].shadowRoot.querySelector('#piepubli > #likes > #cont').textContent);
+       tablon.appendChild(ordenado[i]);
+    }
+    
+    
+  }
+
+function ordenarNuevos(){
+    ordPorLikes = false;
+    let publicacionComponente = document.querySelector('#tablon').querySelectorAll('publicacion-componente');
+    let arr = [];
+
+    if(!ordNuevos){
+        document.getElementsByClassName('ordBtn')[1].style.backgroundColor = '#d3668a';
+        document.getElementsByClassName('ordBtn')[0].style.backgroundColor = 'whitesmoke';
+        document.getElementsByClassName('ordBtn')[2].style.backgroundColor = 'whitesmoke';
+        ordNuevos = true;
+        ordAntiguo = false;
+        ordLikes = false;
+    }
+
+    for(let i=0;i<publicacionComponente.length;i++){
+        arr.push(publicacionComponente[i]);
+    }
+
+    let ordenado = arr.sort(function(a,b){
+        let shadow = a.shadowRoot.querySelector('#piepubli > #hora').textContent;        
+        let shadow2 = b.shadowRoot.querySelector('#piepubli > #hora').textContent; 
+
+        let date1 = new Date(shadow.split(' ')[0] + 'T' + shadow.split(' ')[1]);
+        let date2 = new Date(shadow2.split(' ')[0] + 'T' + shadow2.split(' ')[1]);
+        
+
+        if(date1 < date2){
+            return 1;
+        }
+
+        if(date1 > date2){
+            return -1;
+        }
+
+        return 0;
+    });
+
+    let tablon = document.getElementById('tablon');
+    tablon.innerHTML = '';
+    for(let i=0;i<ordenado.length;i++){
+       tablon.append(ordenado[i]);
+    }
+    
+}
+
 obtenerElementosGet();
-console.log(obtenerHoraFecha());

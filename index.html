@@ -26,10 +26,10 @@
         </style>
         <div id="emailUser">
         </div>
-        <hr>
+        <hr style="border: 0.1vw solid grey;">
         <div id="contenido" style="white-space: normal; word-break:break-word;">
         </div>
-        <div id="piepubli" style="display: flex; margin: auto; border-bottom: 1px solid grey; align-items: center;">
+        <div id="piepubli" style="display: flex; margin: auto; border-bottom: 0.2vw solid whitesmoke; align-items: center;">
             <div id="editado"></div>
             <div style="width: 60%;">
             </div>
@@ -66,13 +66,13 @@
     </header>
     <main>
         <div id="botonesOrdenamiento">
-            <button class="ordBtn">
+            <button class="ordBtn" onclick="ordenarAntiguos()">
                 <img src="./img/old.png" alt="">
             </button>
-            <button class="ordBtn">
+            <button class="ordBtn" onclick="ordenarNuevos()">
                 <img src="./img/young.png" alt="">
             </button>
-            <button class="ordBtn">
+            <button class="ordBtn" onclick="ordenarLikes()">
                 <img style="width: 60%;" src="./img/likebtn.png" alt="">
             </button>
         </div>

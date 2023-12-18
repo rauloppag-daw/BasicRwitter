@@ -41,7 +41,7 @@ main {
     display: flex;
     height: 90vh;
     display: flex;
-
+    
     #tablon {
         margin: auto;
         width: 70%;
@@ -49,6 +49,7 @@ main {
         height: 100%;
         border-radius: 1vw;
         border: 0.1vw solid whitesmoke;
+        overflow-y: scroll;
     }
 
     #publicRweet {
@@ -250,3 +251,24 @@ main {
             cursor: pointer;
         }
 }
+
+::-webkit-scrollbar {
+    width: 12px;               
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;        
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: whitesmoke;    
+    border-radius: 20px;       
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background-color: lightgrey;      
+  }
+
+  html::selection{
+    background-color: #d3668a;
+  }

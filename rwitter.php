@@ -66,6 +66,5 @@ function likear($conexion){
     $isOk = $sentencia->execute();
 
     echo $likesTotal;
-
 }
 
