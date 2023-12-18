@@ -123,15 +123,19 @@ function anyadirPublicacion(){
    
     
     if(incorrecto!=false){
-        anyadirElementoPost(email, nombre, cuerpo);
+        anyadirElementoPost(email, nombre, cuerpo)
+            
+            document.forms.publi.nombre.value = "";
+            document.forms.publi.email.value= "";
+            document.forms.publi.cuerpo.value = "";
+        }
         
+
     
-        document.forms.publi.nombre.value = "";
-        document.forms.publi.email.value= "";
-        document.forms.publi.cuerpo.value = "";
+        
             
     }
-}
+
 
 function compararFecha(f1, f2){
     let arr1 = convertirArray(f1);
@@ -203,6 +207,24 @@ async function anyadirElementoPost(email, nombre, cuerpo){
         for(let i=0;i<resultado.length;i++){
             let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
             tablon.appendChild(publicacion);
+        }
+        if(ordAntiguo){
+            ordenarAntiguos();
+            console.log(0)
+        }
+
+        if(ordNuevos){
+            ordenarNuevos();
+            console.log(1)
+        }
+
+        if(ordLikes){
+            ordenarLikes();
+        }
+
+        if(!ordAntiguo && !ordNuevos && !ordLikes){
+            ordenarNuevos();
+            console.log(3)
         }
     }
     
