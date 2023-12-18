@@ -218,6 +218,9 @@ document.getElementById('volver').onclick = ()=>{
     document.getElementById('formCont').style.display = 'none';
     document.getElementById('editar').style.display = 'none';
     document.getElementById('publicar').style.display = 'block';
+    document.forms.publi.nombre.value = "";
+    document.forms.publi.email.value = "";
+    document.forms.publi.cuerpo.value = "";
 }
 
 function obtenerHoraFecha(){

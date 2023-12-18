@@ -245,11 +245,11 @@ main {
 
 .ordBtn:hover{
     filter: drop-shadow(0px 0px 5px whitesmoke);
-
+    cursor: pointer;
         & img {
             animation: sendRweet 0.5s infinite;
             animation-delay: 0.2s;
-            cursor: pointer;
+            
         }
 }
 
