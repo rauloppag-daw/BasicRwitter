@@ -14,9 +14,27 @@ function aplicacion(){
             devolverRweets($conexion);
         }else if($_GET['function'] == 3){
             likear($conexion);
+        }else if($_GET['function'] == 4){
+            borrarRweet($conexion);
+            devolverRweets($conexion);
+        }else if($_GET['function'] == 5){
+            modificarRweet($conexion);
+            devolverRweets($conexion);
         }
     }
 }
+
+function modificarRweet($conexion){
+    $_post = json_decode(file_get_contents('php://input'),true);
+    $sql = 'UPDATE rweets SET email = :e, nombre = :n, cuerpo = :c WHERE id = :i';
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bindParam(':e', $_post['email']);
+    $sentencia->bindParam(':n', $_post['nombre']);
+    $sentencia->bindParam(':c', $_post['cuerpo']);
+    $sentencia->bindParam(':i', $_post['codigo']);
+    $isOk = $sentencia->execute();
+}
+
 
 
 function devolverRweets($conexion){
@@ -68,3 +86,10 @@ function likear($conexion){
     echo $likesTotal;
 }
 
+function borrarRweet($conexion){
+    $_post = json_decode(file_get_contents('php://input'),true);
+    $sql = 'DELETE FROM rweets WHERE id = :c';
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bindParam(':c', $_post['codigo']);
+    $isOk = $sentencia->execute();
+}

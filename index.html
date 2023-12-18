@@ -24,7 +24,38 @@
             display: flex; align-items: center; background-color: transparent;
         }
         </style>
-        <div id="emailUser">
+        <div id="headerPubli" style="display: flex; cursor:auto;">
+            <div id="emailUser" style="cursor:auto;">
+
+            </div>
+            <div style="width: 54vw;">
+            </div>
+            <style>
+                #editDelete{
+                    margin-top: 1vw;
+                    display: flex;
+                    & button{
+                        background-color: transparent;
+                        border: none;
+                        width: 2vw;
+                        height: 1.5vw;
+                        cursor: pointer;
+                        margin-right: 1vw;
+                        & img{
+                            width: 2vw;
+                            height: 1.5vw;
+                        }
+                    }
+                }
+            </style>
+            <div id="editDelete">
+                <button id="borrarBtn">
+                    <img src="./img/basura.png">
+                </button>
+                <button id="editarBtn">
+                    <img src="./img/lapiz.png">
+                </button>
+            </div>
         </div>
         <hr style="border: 0.1vw solid grey;">
         <div id="contenido" style="white-space: normal; word-break:break-word;">
@@ -55,7 +86,8 @@
             <p class="error"></p>
             <textarea id="cuerpo" placeholder="Escribe lo que quieras"></textarea>
         </form>
-        <button id="publicar" onclick="anyadirPublicacion()">Publicar</button>
+        <button id="publicar" class="btnEditPublicar" onclick="anyadirPublicacion()">Publicar</button>
+        <button id="editar" class="btnEditPublicar" style="display: none;">Editar</button>
         <div id="volvCont">
             <button id="volver">Volver</button>
         </div>

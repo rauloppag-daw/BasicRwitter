@@ -175,7 +175,8 @@ main {
         font-family: Redhatblack;
         color: whitesmoke;
     }
-    #publicar{
+
+    .btnEditPublicar{
         border: none;
         border-radius: 1vw;
         background-color: transparent;
@@ -189,7 +190,7 @@ main {
         color: #13002d;
     }
 
-    #publicar:hover{
+    .btnEditPublicar:hover{
         background-color: #d3668a;
     }
     #volvCont{
@@ -252,23 +253,27 @@ main {
         }
 }
 
-::-webkit-scrollbar {
+*::-webkit-scrollbar {
     width: 12px;               
   }
   
-  ::-webkit-scrollbar-track {
+  *::-webkit-scrollbar-track {
     background: transparent;        
   }
   
-  ::-webkit-scrollbar-thumb {
+  *::-webkit-scrollbar-thumb {
     background-color: whitesmoke;    
     border-radius: 20px;       
   }
 
-  ::-webkit-scrollbar-thumb:active {
+  *::-webkit-scrollbar-thumb:active {
     background-color: lightgrey;      
   }
 
-  html::selection{
+  ::-moz-selection{
+    background-color: #d3668a;
+  }
+
+  ::selection{
     background-color: #d3668a;
   }

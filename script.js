@@ -23,7 +23,7 @@ class PublicacionComponente extends HTMLElement {
     let plantilla = document.getElementById('publicacion'); 
     let plantillaContenido = plantilla.content;
 
-    let emailUser = plantillaContenido.querySelector('#emailUser');
+    let emailUser = plantillaContenido.querySelector('#headerPubli > #emailUser');
     let contenido = plantillaContenido.querySelector('#contenido');
     let hora = plantillaContenido.querySelector('#hora');
     let likes = plantillaContenido.querySelector('#likes');
@@ -61,6 +61,14 @@ class PublicacionComponente extends HTMLElement {
             console.log(this.likes)
         })
     })
+
+    this.shadowRoot.querySelector('#headerPubli> #editDelete > #borrarBtn').onclick = ()=>{
+        borrarPubli(this.codigo);
+    }
+
+    this.shadowRoot.querySelector('#headerPubli> #editDelete > #editarBtn').onclick = ()=>{
+        editarPubli(this.codigo, this.email, this.nombre, this.cuerpo);
+    }
     
 
     }
@@ -69,9 +77,53 @@ class PublicacionComponente extends HTMLElement {
 // Registro del componente personalizado
 customElements.define('publicacion-componente',PublicacionComponente);
 
+function editarPubli(codigo, email,nombre, contenido){
+    document.getElementById('publicar').style.display = 'none';
+    document.getElementById('editar').style.display = 'block';
 
+    document.forms.publi.nombre.value = nombre;
+    document.forms.publi.email.value = email;
+    document.forms.publi.cuerpo.value = contenido;
 
+    document.getElementById('cortina').style.display= 'block';
+    document.getElementById('formCont').style.display = 'grid';
 
+    document.getElementById('editar').onclick = ()=>{
+        nombre =  document.forms.publi.nombre.value;
+        email =  document.forms.publi.email.value;
+        contenido =  document.forms.publi.cuerpo.value;
+        modificarPubliPost(codigo, email, nombre, contenido);
+        document.forms.publi.nombre.value = "";
+        document.forms.publi.email.value = "";
+        document.forms.publi.cuerpo.value = "";
+        document.getElementById('cortina').style.display= 'none';
+        document.getElementById('formCont').style.display = 'none';
+        document.getElementById('editar').style.display = 'none';
+        document.getElementById('publicar').style.display = 'block';
+
+    }
+}
+
+async function modificarPubliPost(codigo, email,nombre, contenido){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=5',
+    {
+        method: 'PUT',
+        headers:{
+            "Content-type": "application/json;charset=UTF-8"
+        },
+        body: JSON.stringify({codigo: codigo, email : email, nombre: nombre, cuerpo: contenido })
+    });
+
+    if(conexion.ok){
+        let resultado = await conexion.json();
+        tablon.innerHTML = '';
+        for(let i=0;i<resultado.length;i++){
+            let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            tablon.appendChild(publicacion);
+        }
+        ordenarElementosEnFuncion();
+    }
+}
 
 function comprobarCampos(nombre, email, cuerpo){
     let errores = "";
@@ -164,6 +216,8 @@ document.getElementById('publicRweet').onclick = ()=>{
 document.getElementById('volver').onclick = ()=>{
     document.getElementById('cortina').style.display= 'none';
     document.getElementById('formCont').style.display = 'none';
+    document.getElementById('editar').style.display = 'none';
+    document.getElementById('publicar').style.display = 'block';
 }
 
 function obtenerHoraFecha(){
@@ -186,6 +240,8 @@ function obtenerHoraFecha(){
             let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
             tablon.appendChild(publicacion);
         }
+        ordenarElementosEnFuncion();
+
     }else{
         alert('Error de red');
     }
@@ -208,24 +264,7 @@ async function anyadirElementoPost(email, nombre, cuerpo){
             let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
             tablon.appendChild(publicacion);
         }
-        if(ordAntiguo){
-            ordenarAntiguos();
-            console.log(0)
-        }
-
-        if(ordNuevos){
-            ordenarNuevos();
-            console.log(1)
-        }
-
-        if(ordLikes){
-            ordenarLikes();
-        }
-
-        if(!ordAntiguo && !ordNuevos && !ordLikes){
-            ordenarNuevos();
-            console.log(3)
-        }
+        ordenarElementosEnFuncion();
     }
     
 }
@@ -245,6 +284,27 @@ async function likearPubli(codigo, val){
         return numLikes;
     }
     
+}
+
+async function borrarPubli(codigo){
+    let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=4',
+    {
+        method: 'DELETE',
+        headers:{
+            "Content-type": "application/json;charset=UTF-8"
+        },
+        body: JSON.stringify({codigo: codigo})
+    });
+
+    if(conexion.ok){
+        let resultado = await conexion.json();
+        tablon.innerHTML = '';
+        for(let i=0;i<resultado.length;i++){
+            let publicacion = new PublicacionComponente(resultado[i]['codigo'], resultado[i]['email'], resultado[i]['nombre'], resultado[i]['cuerpo'], resultado[i]['likes'], resultado[i]['fecha']);
+            tablon.appendChild(publicacion);
+        }
+        ordenarElementosEnFuncion();
+}
 }
 
 function ordenarAntiguos(){
@@ -326,7 +386,6 @@ function ordenarLikes(){
     let tablon = document.getElementById('tablon');
     tablon.innerHTML = '';
     for(let i=0;i<ordenado.length;i++){
-        console.log(ordenado[i].shadowRoot.querySelector('#piepubli > #likes > #cont').textContent);
        tablon.appendChild(ordenado[i]);
     }
     
@@ -376,6 +435,25 @@ function ordenarNuevos(){
        tablon.append(ordenado[i]);
     }
     
+}
+
+function ordenarElementosEnFuncion(){
+    if(ordAntiguo){
+        ordenarAntiguos();
+        console.log(0)
+    }
+
+    if(ordNuevos){
+        ordenarNuevos();
+    }
+
+    if(ordLikes){
+        ordenarLikes();
+    }
+
+    if(!ordAntiguo && !ordNuevos && !ordLikes){
+        ordenarNuevos();
+    }
 }
 
 obtenerElementosGet();
