@@ -3,7 +3,9 @@
 
 aplicacion();
 
-
+/**
+ * Funcion que inicia la aplicación y controla la variable GET[function] para decidir que acción hacer
+ */
 function aplicacion(){
     $conexion = new PDO('mysql:host=localhost;dbname=rwitter', 'root', '');
     if(isset($_GET['function'])){
@@ -23,7 +25,9 @@ function aplicacion(){
         }
     }
 }
-
+/**
+ * Función que modifica los rweets de la BBDD
+ */
 function modificarRweet($conexion){
     $_post = json_decode(file_get_contents('php://input'),true);
     $sql = 'UPDATE rweets SET email = :e, nombre = :n, cuerpo = :c WHERE id = :i';
@@ -35,8 +39,9 @@ function modificarRweet($conexion){
     $isOk = $sentencia->execute();
 }
 
-
-
+/**
+ * Devuelve mediante echo todos los rweets
+ */
 function devolverRweets($conexion){
     $sql = 'SELECT * FROM rweets';
     $sentencia = $conexion->prepare($sql);
@@ -51,7 +56,9 @@ function devolverRweets($conexion){
 
     echo json_encode($rweets);
 }
-
+/**
+ * Añade un rweet a la base de datos mediante POST
+ */
 function anyadirRweet($conexion){
     $_post = json_decode(file_get_contents('php://input'),true);
     $sql = 'INSERT INTO rweets (email, nombre, cuerpo, likes, fecha ) VALUES (:e, :n, :c, :l, :f)';
@@ -64,7 +71,9 @@ function anyadirRweet($conexion){
     $isOk = $sentencia->execute();
 }
 
-
+/**
+ * Función que actualiza los likes de una publicación
+ */
 function likear($conexion){
     $_post = json_decode(file_get_contents('php://input'),true);
 
@@ -85,7 +94,9 @@ function likear($conexion){
 
     echo $likesTotal;
 }
-
+/**
+ * Borra un rweet dado un codigo
+ */
 function borrarRweet($conexion){
     $_post = json_decode(file_get_contents('php://input'),true);
     $sql = 'DELETE FROM rweets WHERE id = :c';

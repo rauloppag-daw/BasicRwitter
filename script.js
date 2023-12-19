@@ -4,6 +4,9 @@ var ordNuevos = false;
 var ordLikes = false;
 
 // Registro del componente personalizado
+/**
+ * Componente web que contiene el email, nombre, contenido, y sistema de likes
+ */
 class PublicacionComponente extends HTMLElement {
     constructor(codigo, email, nombre, cuerpo, likes, fecha) {
         super();
@@ -18,29 +21,35 @@ class PublicacionComponente extends HTMLElement {
 
 
     connectedCallback() {
+        //Borrado del contenido del shadow
         this.shadow.innerHTML = "";
+        //Obtenemos plantilla
         let plantilla = document.getElementById('publicacion');
         let plantillaContenido = plantilla.content;
 
+        //Separación de los elementos de la plantilla
         let emailUser = plantillaContenido.querySelector('#headerPubli > #emailUser');
         let contenido = plantillaContenido.querySelector('#contenido');
         let hora = plantillaContenido.querySelector('#hora');
         let likes = plantillaContenido.querySelector('#likes');
 
+        //Asignamos los atributos a los contenidos de la plantilla
         emailUser.innerHTML = `<img class="icon" src="./img/user.png" style="width:45px; heigth:45px; margin-right:1%; margin-left: 1%; filter: invert();"/> <b>${this.nombre}   </b> <p style="color:lightgrey">(${this.email})</p>`;
         contenido.innerHTML = `<p style="width: 90%; margin-left: 1%;">${this.cuerpo}</p>`;
         likes.querySelector('#dislike').innerHTML = `<button   style="border: none; background-color: transparent; cursor:pointer;"> <img src="./img/dislike.png" style="padding-top: 1.5vh; filter: invert(); width:25px; heigth:25px; margin-right:1%; margin-left: 1%;"/> </button>`;
         likes.querySelector('#cont').innerHTML = `<p> ${this.likes}</p>`;
         likes.querySelector('#like').innerHTML = `<button style="border: none; background-color: transparent; cursor:pointer"> <img src="./img/like.png" style="filter: invert(); width:25px; heigth:25px; margin-right:1%; margin-left: 1%;" /> </button>`;
 
+        //Asignamos la fecha, en caso de no existir se asigna y si existe se deja la que estaba.
         if (this.fecha == '') {
             hora.textContent = obtenerHoraFecha();
         } else {
             hora.textContent = this.fecha;
         }
-
+        //Se añade el contenido de la plantilla al shadow
         this.shadow.append(plantillaContenido.cloneNode(true));
 
+        //Sistema de añadir likes
         this.shadowRoot.querySelectorAll('#piepubli > #likes > #like > button')[0].addEventListener('click', () => {
             likearPubli(this.codigo, 1)
                 .then((numlikes) => {
@@ -50,6 +59,7 @@ class PublicacionComponente extends HTMLElement {
 
         });
 
+        //Sistema de añadir dislikes
         this.shadowRoot.querySelectorAll('#piepubli > #likes >  #dislike > button')[0].addEventListener('click', () => {
             likearPubli(this.codigo, -1)
                 .then((numlikes) => {
@@ -57,11 +67,12 @@ class PublicacionComponente extends HTMLElement {
                     this.shadowRoot.querySelector('#cont').innerHTML = `<p> ${this.likes}</p>`;
                 });
         });
-
+        //Sistema de borrado de publicaciones
         this.shadowRoot.querySelector('#headerPubli> #editDelete > #borrarBtn').onclick = () => {
             borrarPubli(this.codigo);
         }
 
+        //Sistema de edición de publicaciones
         this.shadowRoot.querySelector('#headerPubli> #editDelete > #editarBtn').onclick = () => {
             editarPubli(this.codigo, this.email, this.nombre, this.cuerpo);
         }
@@ -70,6 +81,13 @@ class PublicacionComponente extends HTMLElement {
 
 customElements.define('publicacion-componente', PublicacionComponente);
 
+/**
+ * Función que prepara el formulario para editar una publicación y conectar con el metodo asincrono que conecta con el back
+ * @param {*} codigo 
+ * @param {*} email 
+ * @param {*} nombre 
+ * @param {*} contenido 
+ */
 function editarPubli(codigo, email, nombre, contenido) {
 
     document.getElementById('publicar').style.display = 'none';
@@ -86,17 +104,26 @@ function editarPubli(codigo, email, nombre, contenido) {
         nombre = document.forms.publi.nombre.value;
         email = document.forms.publi.email.value;
         contenido = document.forms.publi.cuerpo.value;
+        let incorrecto = comprobarCampos(nombre, email, contenido);
+        if(incorrecto){
+            modificarPubliPost(codigo, email, nombre, contenido);
 
-        modificarPubliPost(codigo, email, nombre, contenido);
-
-        vaciarFormulario();
-
-        esconderForm();
-        document.getElementById('editar').style.display = 'none';
-        document.getElementById('publicar').style.display = 'block';
+            vaciarFormulario();
+    
+            esconderForm();
+            document.getElementById('editar').style.display = 'none';
+            document.getElementById('publicar').style.display = 'block';
+        }
+        
     }
 }
-
+/**
+ * Método asincrono que edita una publicación mediante método PUT
+ * @param {*} codigo 
+ * @param {*} email 
+ * @param {*} nombre 
+ * @param {*} contenido 
+ */
 async function modificarPubliPost(codigo, email, nombre, contenido) {
     let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=5',
         {
@@ -117,7 +144,13 @@ async function modificarPubliPost(codigo, email, nombre, contenido) {
         ordenarElementosEnFuncion();
     }
 }
-
+/**
+ * Comprueba los campos del formulario
+ * @param {*} nombre 
+ * @param {*} email 
+ * @param {*} cuerpo 
+ * @returns 
+ */
 function comprobarCampos(nombre, email, cuerpo) {
     let errores = "";
 
@@ -155,6 +188,9 @@ function comprobarCampos(nombre, email, cuerpo) {
     return incorrecto;
 }
 
+/**
+ * Añade una nueva publicacion dados los datos de un formulario
+ */
 function anyadirPublicacion() {
 
     let nombre = document.forms.publi.nombre.value;
@@ -169,7 +205,12 @@ function anyadirPublicacion() {
     }
 }
 
-
+/**
+ * Compara dos fechas de la clase Date
+ * @param {*} f1 
+ * @param {*} f2 
+ * @returns 
+ */
 function compararFecha(f1, f2) {
     let arr1 = convertirArray(f1);
     let arr2 = convertirArray(f2);
@@ -186,18 +227,26 @@ function compararFecha(f1, f2) {
     return true;
 }
 
-
+/**
+ * Evento onclick que muestra el formulario para añadirlo
+ */
 document.getElementById('publicRweet').onclick = () => {
     mostrarForm();
 }
-
+/**
+ * Evento onclick que esconde y reinicia el formulario
+ */
 document.getElementById('volver').onclick = () => {
     esconderForm();
     document.getElementById('editar').style.display = 'none';
     document.getElementById('publicar').style.display = 'block';
     vaciarFormulario();
+    reiniciarForm();
 }
-
+/**
+ * Obtiene la hora y fecha actual y las construye en un string
+ * @returns 
+ */
 function obtenerHoraFecha() {
     let date = new Date();
     let fecha = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
@@ -207,7 +256,9 @@ function obtenerHoraFecha() {
 
     return fecha + ' ' + hora + ":" + minuto + ":" + segundos;
 }
-
+/**
+ * Obtiene todas las publicaciones del backend mediante una petición GET
+ */
 async function obtenerElementosGet() {
     let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=1');
 
@@ -222,7 +273,12 @@ async function obtenerElementosGet() {
         alert('Error de red');
     }
 }
-
+/**
+ * Añade publicación al backend mediante método POST
+ * @param {*} email 
+ * @param {*} nombre 
+ * @param {*} cuerpo 
+ */
 async function anyadirElementoPost(email, nombre, cuerpo) {
     let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=2',
         {
@@ -243,7 +299,12 @@ async function anyadirElementoPost(email, nombre, cuerpo) {
         ordenarElementosEnFuncion();
     }
 }
-
+/**
+ * Método que añade o quita un like en el backend mediante el método PUT
+ * @param {*} codigo 
+ * @param {*} val 
+ * @returns 
+ */
 async function likearPubli(codigo, val) {
     let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=3',
         {
@@ -260,7 +321,10 @@ async function likearPubli(codigo, val) {
     }
 
 }
-
+/**
+ * Borra una publicación dado un código en el backend mediante metodo DELETE
+ * @param {*} codigo 
+ */
 async function borrarPubli(codigo) {
     let conexion = await fetch('http://localhost/newTwitter/rwitter.php?function=4',
         {
@@ -281,7 +345,9 @@ async function borrarPubli(codigo) {
         ordenarElementosEnFuncion();
     }
 }
-
+/**
+ * Ordena los elementos de más antiguos a más recientes
+ */
 function ordenarAntiguos() {
     ordPorLikes = false;
     let publicacionComponente = document.querySelector('#tablon').querySelectorAll('publicacion-componente');
@@ -323,7 +389,9 @@ function ordenarAntiguos() {
     }
 
 }
-
+/**
+ * Ordena los elementos con más likes a menos likes
+ */
 function ordenarLikes() {
     ordPorLikes = true;
     let publicacionComponente = document.querySelector('#tablon').querySelectorAll('publicacion-componente');
@@ -359,7 +427,9 @@ function ordenarLikes() {
         tablon.appendChild(ordenado[i]);
     }
 }
-
+/**
+ * Ordena los elementos de más recientes a más nuevos
+ */
 function ordenarNuevos() {
     ordPorLikes = false;
     let publicacionComponente = document.querySelector('#tablon').querySelectorAll('publicacion-componente');
@@ -402,7 +472,9 @@ function ordenarNuevos() {
     }
 
 }
-
+/**
+ *  Función que cada vez que se añade un elemento se ejecuta para reordenar todas las publicaciones
+ */
 function ordenarElementosEnFuncion() {
     if (ordAntiguo) {
         ordenarAntiguos();
@@ -420,27 +492,49 @@ function ordenarElementosEnFuncion() {
         ordenarNuevos();
     }
 }
-
+/**
+ * Método para controlar el estilo de los botones de ordenamiento
+ * @param {*} arr 
+ */
 function definirBotonesOrdenamiento(arr) {
     ordAntiguo = arr[0];
     ordNuevos = arr[1];
     ordLikes = arr[2];
 }
-
+/**
+ * Función que vacia los campos del formulario
+ */
 function vaciarFormulario() {
     document.forms.publi.nombre.value = "";
     document.forms.publi.email.value = "";
     document.forms.publi.cuerpo.value = "";
 }
-
+/**
+ * Esconde mediante estilos el formulario
+ */
 function esconderForm() {
     document.getElementById('cortina').style.display = 'none';
     document.getElementById('formCont').style.display = 'none';
 }
-
+/**
+ * Muestra el formulario
+ */
 function mostrarForm() {
     document.getElementById('cortina').style.display = 'block';
     document.getElementById('formCont').style.display = 'grid';
+}
+/**
+ * Reinicia los mensajes de errores del formulario
+ */
+function reiniciarForm(){
+    let errores = document.getElementsByClassName('error');
+    
+    for(let i=0;i<errores.length;i++){
+        errores[i].innerHTML = '';
+    }
+    document.forms.publi.nombre.style.borderColor = "whitesmoke";
+    document.forms.publi.email.style.borderColor = "whitesmoke";
+    document.forms.publi.cuerpo.style.borderColor = "whitesmoke";
 }
 
 obtenerElementosGet();
